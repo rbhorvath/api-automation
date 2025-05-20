@@ -78,8 +78,14 @@ Tests run automatically on:
 The framework uses minimal configuration in `src/test/resources/config.properties`:
 
 ```properties
-id=2
+# API Key for reqres.in (signup at https://reqres.in/signup)
+api.key=your_api_key_here 
+# Example id (if still used, or remove if obsolete)
+# id=2 
 ```
+
+Make sure to replace `your_api_key_here` with your actual API key from reqres.in. 
+For running in GitHub Actions, it's recommended to store the API key as a repository secret (e.g., `REQRES_API_KEY`) and pass it to your tests as an environment variable. You would then modify `RestClient.java` to read this environment variable.
 
 ## Dependencies
 

@@ -43,4 +43,8 @@ target/generated-sources/
 # Windows
 Thumbs.db
 ehthumbs.db
-Desktop.ini 
+Desktop.ini
+
+# Configuration files (if they contain sensitive data)
+config.properties
+*.properties 

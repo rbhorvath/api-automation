@@ -5,62 +5,78 @@ import com.api.automation.models.TokenResponse;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class AuthApiTest extends BaseTest {
     
-    @Test
-    public void testSuccessfulRegister() {
-        LoginRequest registerRequest = LoginRequest.builder()
-                .email("eve.holt@reqres.in")
-                .password("pistol")
-                .build();
-        
+    @DataProvider(name = "registerData")
+    public Object[][] registerDataProvider() {
+        return new Object[][]{
+                {"eve.holt@reqres.in", "pistol", HttpStatus.SC_OK, true, null},
+                {"sydney@fife", null, HttpStatus.SC_BAD_REQUEST, false, "Missing password"}
+        };
+    }
+
+    @Test(dataProvider = "registerData")
+    public void testRegisterScenarios(String email, String password, int expectedStatusCode, boolean expectTokenAndId, String expectedErrorMessage) {
+        var registerBuilder = LoginRequest.builder().email(email);
+        if (password != null) {
+            registerBuilder.password(password);
+        }
+        LoginRequest registerRequest = registerBuilder.build();
+
         Response response = client.post("/register", registerRequest);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
-        
+        Assert.assertEquals(response.getStatusCode(), expectedStatusCode);
+
         TokenResponse tokenResponse = response.as(TokenResponse.class);
-        Assert.assertNotNull(tokenResponse.token());
-        Assert.assertNotNull(tokenResponse.id());
+        if (expectTokenAndId) {
+            Assert.assertNotNull(tokenResponse.token(), "Token should not be null for successful registration");
+            Assert.assertNotNull(tokenResponse.id(), "ID should not be null for successful registration");
+        } else {
+            Assert.assertNotNull(tokenResponse.error(), "Error message should not be null for unsuccessful registration");
+            if (expectedErrorMessage != null) {
+                 // Similar to login, actual error messages from reqres.in for bad registration data (non-API key error) might vary.
+                Assert.assertEquals(tokenResponse.error().toLowerCase(), expectedErrorMessage.toLowerCase());
+            }
+        }
     }
-    
-    @Test
-    public void testUnsuccessfulRegister() {
-        LoginRequest registerRequest = LoginRequest.builder()
-                .email("sydney@fife")
-                .build();
-        
-        Response response = client.post("/register", registerRequest);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_BAD_REQUEST);
-        
-        TokenResponse tokenResponse = response.as(TokenResponse.class);
-        Assert.assertEquals(tokenResponse.error(), "Missing password");
+
+    @DataProvider(name = "loginData")
+    public Object[][] loginDataProvider() {
+        return new Object[][]{
+                {"eve.holt@reqres.in", "cityslicka", HttpStatus.SC_OK, true, null}, // Successful login
+                {"peter@klaven", null, HttpStatus.SC_BAD_REQUEST, false, "Missing password"}, // Unsuccessful login - missing password
+                {"eve.holt@reqres.in", "wrongpassword", HttpStatus.SC_OK, true, null} 
+        };
     }
-    
-    @Test
-    public void testSuccessfulLogin() {
-        LoginRequest loginRequest = LoginRequest.builder()
-                .email("eve.holt@reqres.in")
-                .password("cityslicka")
-                .build();
-        
+
+    @Test(dataProvider = "loginData")
+    public void testLoginScenarios(String email, String password, int expectedStatusCode, boolean expectToken, String expectedErrorMessage) {
+        var loginBuilder = LoginRequest.builder().email(email);
+        if (password != null) {
+            loginBuilder.password(password);
+        }
+        LoginRequest loginRequest = loginBuilder.build();
+
         Response response = client.post("/login", loginRequest);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
-        
+        Assert.assertEquals(response.getStatusCode(), expectedStatusCode);
+
         TokenResponse tokenResponse = response.as(TokenResponse.class);
-        Assert.assertNotNull(tokenResponse.token());
-    }
-    
-    @Test
-    public void testUnsuccessfulLogin() {
-        LoginRequest loginRequest = LoginRequest.builder()
-                .email("peter@klaven")
-                .build();
-        
-        Response response = client.post("/login", loginRequest);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_BAD_REQUEST);
-        
-        TokenResponse tokenResponse = response.as(TokenResponse.class);
-        Assert.assertEquals(tokenResponse.error(), "Missing password");
+        if (expectToken) {
+            Assert.assertNotNull(tokenResponse.token(), "Token should not be null for successful login");
+            Assert.assertNull(tokenResponse.error(), "Error should be null for successful login");
+        } else {
+            // Handle cases where login fails
+            if (expectedErrorMessage != null) {
+                Assert.assertNotNull(tokenResponse.error(), "Error message should not be null when an error message is expected");
+                Assert.assertEquals(tokenResponse.error().toLowerCase(), expectedErrorMessage.toLowerCase());
+                Assert.assertNull(tokenResponse.token(), "Token should be null for unsuccessful login with specific error message");
+            } else {
+                // This case implies login failed, but no specific error message string is expected in the 'error' field (e.g. wrong password returning 200 OK)
+                Assert.assertNull(tokenResponse.error(), "Error field should be null for this failure scenario");
+                Assert.assertNull(tokenResponse.token(), "Token should be null for this failure scenario");
+            }
+        }
     }
 } 

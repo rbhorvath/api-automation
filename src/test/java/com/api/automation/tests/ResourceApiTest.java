@@ -4,6 +4,7 @@ import com.api.automation.models.ListResponse;
 import com.api.automation.models.Resource;
 import com.api.automation.models.SingleResponse;
 import io.restassured.response.Response;
+import io.restassured.common.mapper.TypeRef;
 import org.apache.http.HttpStatus;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -15,8 +16,7 @@ public class ResourceApiTest extends BaseTest {
         Response response = client.get("/unknown");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
         
-        @SuppressWarnings("unchecked")
-        ListResponse<Resource> listResponse = response.as(ListResponse.class);
+        ListResponse<Resource> listResponse = response.as(new TypeRef<ListResponse<Resource>>() {});
         Assert.assertTrue(listResponse.data().size() > 0);
     }
     
@@ -25,8 +25,7 @@ public class ResourceApiTest extends BaseTest {
         Response response = client.get("/unknown/2");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
         
-        @SuppressWarnings("unchecked")
-        SingleResponse<Resource> singleResponse = response.as(SingleResponse.class);
+        SingleResponse<Resource> singleResponse = response.as(new TypeRef<SingleResponse<Resource>>() {});
         Assert.assertNotNull(singleResponse.data());
     }
     
