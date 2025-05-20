@@ -42,6 +42,8 @@ jobs:
         touch target/site/.gitkeep
         
     - name: Run API Tests
+      env:
+        REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
       run: |
         mvn clean test -Dtest=* -Dmaven.test.failure.ignore=true -Dsurefire.useFile=false -Dsurefire.reportFormat=plain -X -e || true
         mkdir -p target/site

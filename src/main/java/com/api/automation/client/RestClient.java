@@ -14,18 +14,35 @@ public class RestClient {
     private static final String API_KEY_VALUE;
 
     static {
-        Properties props = new Properties();
-        try (InputStream input = RestClient.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                System.out.println("Sorry, unable to find config.properties");
-                API_KEY_VALUE = ""; // Or throw an exception
-            } else {
-                props.load(input);
-                API_KEY_VALUE = props.getProperty("api.key");
+        String apiKeyFromEnv = System.getenv("REQRES_API_KEY");
+        if (apiKeyFromEnv != null && !apiKeyFromEnv.isEmpty()) {
+            API_KEY_VALUE = apiKeyFromEnv;
+            System.out.println("Loaded API key from environment variable REQRES_API_KEY.");
+        } else {
+            Properties props = new Properties();
+            try (InputStream input = RestClient.class.getClassLoader().getResourceAsStream("config.properties")) {
+                if (input == null) {
+                    System.err.println("ERROR: config.properties not found and REQRES_API_KEY env variable is not set.");
+                    API_KEY_VALUE = ""; // Or throw an exception to fail fast
+                } else {
+                    props.load(input);
+                    API_KEY_VALUE = props.getProperty("api.key");
+                    if (API_KEY_VALUE == null || API_KEY_VALUE.trim().isEmpty()) {
+                        System.err.println("ERROR: api.key not found or empty in config.properties and REQRES_API_KEY env variable is not set.");
+                        // throw new RuntimeException("API Key not configured.");
+                    }
+                    System.out.println("Loaded API key from config.properties.");
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException("Error loading config.properties", ex);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException("Error loading config.properties", ex);
+        }
+
+        if (API_KEY_VALUE == null || API_KEY_VALUE.trim().isEmpty()) {
+            System.err.println("CRITICAL ERROR: API Key is not configured. Please set REQRES_API_KEY environment variable or api.key in config.properties.");
+            // Consider throwing a hard exception here if an API key is absolutely mandatory for the app to function
+            // throw new RuntimeException("API Key is not configured correctly.");
         }
     }
     
