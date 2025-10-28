@@ -1,64 +1,55 @@
+src/
+src/
+
 # API Test Automation Framework
 
-A minimal and efficient API test automation framework using Java, TestNG, and REST Assured. This framework is optimized for running in GitHub Actions.
-
-## Features
-
-- REST API testing using REST Assured
-- Parallel test execution
-- Minimal and maintainable code structure
-- GitHub Actions integration
-- TestNG for test execution and reporting
+This is an API test automation project using Java 25, Maven, TestNG, and REST Assured.
 
 ## Prerequisites
 
-- Java 17 or higher
+- Java 25 or higher
 - Maven 3.6 or higher
 
 ## Project Structure
 
 ```
 src/
-├── main/java/com/api/automation/
-│   ├── client/
-│   │   └── RestClient.java         # HTTP client for API requests
-│   └── models/                     # API request/response models
-└── test/
-    ├── java/com/api/automation/tests/
-    │   ├── BaseTest.java          # Base test class
-    │   ├── UserApiTest.java       # User API tests
-    │   ├── ResourceApiTest.java   # Resource API tests
-    │   ├── AuthApiTest.java       # Authentication tests
-    │   └── DelayedResponseTest.java # Delayed response tests
-    └── resources/
-        ├── config.properties       # Test configuration
-        └── testng.xml             # TestNG configuration
+  main/java/com/api/automation/
+    client/
+    models/
+    utils/
+  main/resources/
+    config.properties
+  test/java/com/api/automation/tests/
+  test/resources/
+    user_test_data.json
+    testng.xml
+.github/workflows/ci.yml
 ```
 
-## Test Categories
+## How to Run
 
-1. **User API Tests**
-   - List users
-   - Get single user
-   - Create user
-   - Update user
-   - Delete user
+1. Install Java and Maven
+2. Run tests with:
+   ```
+   mvn clean test
+   ```
 
-2. **Resource API Tests**
-   - List resources
-   - Get single resource
-   - Get non-existent resource
+## Description
 
-3. **Auth API Tests**
-   - Successful login
-   - Unsuccessful login
-   - Successful register
-   - Unsuccessful register
+This project contains basic API tests for reqres.in endpoints. All tests are in the `src/test/java/com/api/automation/tests/` folder.
 
-4. **Delayed Response Tests**
-   - Test delayed user list
+## CI/CD
 
-## Running Tests
+- Automated build, test, and report upload via GitHub Actions (`.github/workflows/ci.yml`)
+
+## Code Quality
+
+- Checkstyle and SpotBugs can be added for static analysis and code style enforcement
+
+## Documentation
+
+- Main classes and methods include Javadoc comments for clarity
 
 ### Local Execution
 
@@ -69,6 +60,7 @@ mvn clean test
 ### GitHub Actions
 
 Tests run automatically on:
+
 - Push to main/master branch
 - Pull requests to main/master branch
 - Daily at 6 AM Brazil time (UTC-3)
@@ -79,12 +71,12 @@ The framework uses minimal configuration in `src/test/resources/config.propertie
 
 ```properties
 # API Key for reqres.in (signup at https://reqres.in/signup)
-api.key=your_api_key_here 
+api.key=your_api_key_here
 # Example id (if still used, or remove if obsolete)
-# id=2 
+# id=2
 ```
 
-Make sure to replace `your_api_key_here` with your actual API key from reqres.in. 
+Make sure to replace `your_api_key_here` with your actual API key from reqres.in.
 For running in GitHub Actions, it's recommended to store the API key as a repository secret (e.g., `REQRES_API_KEY`) and pass it to your tests as an environment variable. You would then modify `RestClient.java` to read this environment variable.
 
 ## Dependencies
@@ -97,6 +89,7 @@ For running in GitHub Actions, it's recommended to store the API key as a reposi
 ## GitHub Actions Workflow
 
 The framework includes a GitHub Actions workflow (`.github/workflows/api-tests.yml`) that:
+
 - Sets up JDK 17
 - Caches Maven dependencies
 - Runs tests in parallel
@@ -109,4 +102,4 @@ The framework includes a GitHub Actions workflow (`.github/workflows/api-tests.y
 2. Create a feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a Pull Request 
+5. Create a Pull Request

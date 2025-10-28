@@ -1,6 +1,7 @@
 package com.api.automation.tests;
 
 import com.api.automation.models.*;
+import com.api.automation.utils.TestDataUtil;
 import io.restassured.response.Response;
 import io.restassured.common.mapper.TypeRef;
 import org.apache.http.HttpStatus;
@@ -38,19 +39,23 @@ public class UserApiTest extends BaseTest {
     
     @Test
     public void testCreateUser() {
-        UserRequest newUser = UserRequest.builder()
-                .name("morpheus")
-                .job("leader")
-                .build();
-        
-        Response response = client.post("/users", newUser);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_CREATED);
-        
-        CreatedUserResponse createdResponse = response.as(CreatedUserResponse.class);
-        Assert.assertEquals(createdResponse.name(), newUser.name());
-        Assert.assertEquals(createdResponse.job(), newUser.job());
-        Assert.assertNotNull(createdResponse.id());
-        Assert.assertNotNull(createdResponse.createdAt());
+        String testDataPath = "src/test/resources/user_test_data.json";
+        var userDataList = TestDataUtil.getUserTestData(testDataPath);
+        for (var userData : userDataList) {
+            UserRequest newUser = UserRequest.builder()
+                    .name(userData.get("name"))
+                    .job(userData.get("job"))
+                    .build();
+
+            Response response = client.post("/users", newUser);
+            Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_CREATED);
+
+            CreatedUserResponse createdResponse = response.as(CreatedUserResponse.class);
+            Assert.assertEquals(createdResponse.name(), newUser.name());
+            Assert.assertEquals(createdResponse.job(), newUser.job());
+            Assert.assertNotNull(createdResponse.id());
+            Assert.assertNotNull(createdResponse.createdAt());
+        }
     }
     
     @Test
