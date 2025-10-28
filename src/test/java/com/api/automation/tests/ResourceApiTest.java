@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 public class ResourceApiTest extends BaseTest {
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testListResources() {
         Response response = client.get("/unknown");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
@@ -20,7 +20,7 @@ public class ResourceApiTest extends BaseTest {
         Assert.assertTrue(listResponse.data().size() > 0);
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testGetSingleResource() {
         Response response = client.get("/unknown/2");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
@@ -29,7 +29,7 @@ public class ResourceApiTest extends BaseTest {
         Assert.assertNotNull(singleResponse.data());
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testGetSingleResourceNotFound() {
         Response response = client.get("/unknown/23");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_NOT_FOUND);

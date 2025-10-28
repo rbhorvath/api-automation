@@ -25,6 +25,10 @@ public record LoginRequest(String email, String password) {
         }
 
         public LoginRequest build() {
+            if (email == null || email.trim().isEmpty()) {
+                throw new IllegalArgumentException("Email must not be null or empty");
+            }
+            // Password can be null or empty to allow API error scenarios
             return new LoginRequest(email, password);
         }
     }

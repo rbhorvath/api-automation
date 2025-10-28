@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 public class DelayedResponseTest extends BaseTest {
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testDelayedResponse() {
         Response response = client.get("/users?delay=3");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);

@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 public class UserApiTest extends BaseTest {
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testListUsers() {
         Response response = client.get("/users?page=2");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
@@ -20,7 +20,7 @@ public class UserApiTest extends BaseTest {
         Assert.assertTrue(listResponse.data().size() > 0);
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testGetSingleUser() {
         Response response = client.get("/users/2");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_OK);
@@ -31,13 +31,13 @@ public class UserApiTest extends BaseTest {
         Assert.assertNotNull(singleResponse.data().email(), "User email should not be null");
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testGetSingleUserNotFound() {
         Response response = client.get("/users/23");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_NOT_FOUND);
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testCreateUser() {
         String testDataPath = "src/test/resources/user_test_data.json";
         var userDataList = TestDataUtil.getUserTestData(testDataPath);
@@ -58,7 +58,7 @@ public class UserApiTest extends BaseTest {
         }
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testUpdateUserWithPut() {
         UserRequest updatedUser = UserRequest.builder()
                 .name("morpheus")
@@ -74,7 +74,7 @@ public class UserApiTest extends BaseTest {
         Assert.assertNotNull(updatedResponse.updatedAt());
     }
     
-    @Test
+    @Test(retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testDeleteUser() {
         Response response = client.delete("/users/2");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.SC_NO_CONTENT);

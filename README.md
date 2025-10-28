@@ -1,6 +1,3 @@
-src/
-src/
-
 # API Test Automation Framework
 
 This is an API test automation project using Java 25, Maven, TestNG, and REST Assured.
@@ -24,7 +21,9 @@ src/
   test/resources/
     user_test_data.json
     testng.xml
-.github/workflows/ci.yml
+.github/workflows/
+  api-tests.yml
+  ci.yml
 ```
 
 ## How to Run
@@ -39,13 +38,12 @@ src/
 
 This project contains basic API tests for reqres.in endpoints. All tests are in the `src/test/java/com/api/automation/tests/` folder.
 
-## CI/CD
-
-- Automated build, test, and report upload via GitHub Actions (`.github/workflows/ci.yml`)
-
 ## Code Quality
 
-- Checkstyle and SpotBugs can be added for static analysis and code style enforcement
+- Javadoc comments are provided for main classes and methods
+- SLF4J logging is used for diagnostics
+- Input validation is implemented in model builders
+- Consistent code style is enforced (see Checkstyle below)
 
 ## Documentation
 
@@ -56,14 +54,6 @@ This project contains basic API tests for reqres.in endpoints. All tests are in 
 ```bash
 mvn clean test
 ```
-
-### GitHub Actions
-
-Tests run automatically on:
-
-- Push to main/master branch
-- Pull requests to main/master branch
-- Daily at 6 AM Brazil time (UTC-3)
 
 ## Configuration
 
@@ -77,7 +67,7 @@ api.key=your_api_key_here
 ```
 
 Make sure to replace `your_api_key_here` with your actual API key from reqres.in.
-For running in GitHub Actions, it's recommended to store the API key as a repository secret (e.g., `REQRES_API_KEY`) and pass it to your tests as an environment variable. You would then modify `RestClient.java` to read this environment variable.
+For running in GitHub Actions, it's recommended to store the API key as a repository secret (e.g., `REQRES_API_KEY`) and pass it to your tests as an environment variable. The framework reads this variable automatically.
 
 ## Dependencies
 
@@ -85,21 +75,3 @@ For running in GitHub Actions, it's recommended to store the API key as a reposi
 - TestNG 7.8.0
 - Jackson 2.15.2
 - Lombok 1.18.30
-
-## GitHub Actions Workflow
-
-The framework includes a GitHub Actions workflow (`.github/workflows/api-tests.yml`) that:
-
-- Sets up JDK 17
-- Caches Maven dependencies
-- Runs tests in parallel
-- Publishes test results
-- Uploads test reports as artifacts
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request

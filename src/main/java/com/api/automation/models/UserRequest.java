@@ -25,6 +25,12 @@ public record UserRequest(String name, String job) {
         }
 
         public UserRequest build() {
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Name must not be null or empty");
+            }
+            if (job == null || job.trim().isEmpty()) {
+                throw new IllegalArgumentException("Job must not be null or empty");
+            }
             return new UserRequest(name, job);
         }
     }

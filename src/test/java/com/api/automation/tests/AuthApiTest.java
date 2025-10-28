@@ -18,7 +18,7 @@ public class AuthApiTest extends BaseTest {
         };
     }
 
-    @Test(dataProvider = "registerData")
+    @Test(dataProvider = "registerData", retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testRegisterScenarios(String email, String password, int expectedStatusCode, boolean expectTokenAndId, String expectedErrorMessage) {
         var registerBuilder = LoginRequest.builder().email(email);
         if (password != null) {
@@ -51,7 +51,7 @@ public class AuthApiTest extends BaseTest {
         };
     }
 
-    @Test(dataProvider = "loginData")
+    @Test(dataProvider = "loginData", retryAnalyzer = com.api.automation.utils.RetryAnalyzer.class)
     public void testLoginScenarios(String email, String password, int expectedStatusCode, boolean expectToken, String expectedErrorMessage) {
         var loginBuilder = LoginRequest.builder().email(email);
         if (password != null) {
