@@ -15,7 +15,6 @@
     <rest-assured.version>5.4.0</rest-assured.version>
     <testng.version>7.10.1</testng.version>
     <jackson.version>2.17.0</jackson.version>
-    <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencies>
